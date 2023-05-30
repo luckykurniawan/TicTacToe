@@ -1,11 +1,15 @@
 #include "ComputerHard.h"
 #include "GameManager.h"
+#include <chrono>
+#include <thread>
 
-ComputerHard::ComputerHard(GameManager& _rGameManager):
+
+ComputerHard::ComputerHard(GameManager& _rGameManager) :
     rGameManager(_rGameManager),
     ComputerAI({ 0,1,2,3,4,5,6,7,8 }),
     m_ComputerSymbol(rGameManager.getComputerSymbol()),
-    m_PlayerSymbol(rGameManager.getPlayerSymbol())
+    m_PlayerSymbol(rGameManager.getPlayerSymbol()),
+    mIsFirstMove(true)
 {}
 
 ComputerHard::~ComputerHard() {}
@@ -17,12 +21,18 @@ int ComputerHard::move() {
 
     //copy board
     char board[NUM_SQUARES];
-    for (size_t i = 0; i < NUM_SQUARES; i++)
+    for (int i = 0; i < NUM_SQUARES; i++)
     {
         board[i] = rGameManager.m_BoardManager.getBoardElement(i);
     }
     //decide move
-    int move = findBestMove(board, m_ValidMove);
+    int move = -1;
+    if (mIsFirstMove)
+    {
+        move = getFirstMove();
+        mIsFirstMove = false;
+    }else 
+        move = findBestMove(board, m_ValidMove);
     //delete move from list of valid moves
     deleteMove(move);
     return move;
@@ -176,4 +186,25 @@ int ComputerHard::evaluate(const char* board, int depth) {
     }
     //if no one wins
     return INT_MIN;
+}
+
+/// <summary>
+/// add randomness to the 1st move so game is not the same all the time
+/// </summary>
+/// <returns>random corner or center move</returns>
+int ComputerHard::getFirstMove() {
+    std::vector<int> moves = { 0,2,6,8,4 };
+    std::vector<int>::iterator iter;
+    iter = std::find(moves.begin(), moves.end(), lastPlayerMove);
+    if (iter != moves.end()) {
+        moves.erase(iter);
+    }
+
+    if (std::find(moves.begin(), moves.end(), 4) == moves.end() || moves.size() == 5 ) {
+        std::random_device rd;
+        std::mt19937 mt(rd());
+        std::uniform_int_distribution<int> dist(0, static_cast<int>(moves.size())-1);
+        return moves.at(dist(mt));
+    }
+    return moves.at(moves.size() - 1);
 }

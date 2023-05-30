@@ -18,7 +18,7 @@ int ComputerNormal::move() {
     //copy board
     char board[NUM_SQUARES];
     int move = -1;
-	for (size_t i = 0; i < NUM_SQUARES; i++)
+	for (int i = 0; i < NUM_SQUARES; i++)
 	{
 		board[i] = rGameManager.m_BoardManager.getBoardElement(i);
 	}

@@ -11,7 +11,7 @@ int ComputerEasy::move() {
     //won't delete anything if player moves second (last move still set to -1)
     deleteMove(lastPlayerMove);
     //select move randomly
-    uniform_int_distribution<int> dist(0, m_ValidMove.size() - 1);
+    uniform_int_distribution<int> dist(0, static_cast<int>(m_ValidMove.size()) - 1);
     int index = dist(m_mt);
     int move = m_ValidMove[index];
     //delete AI move from valid move list

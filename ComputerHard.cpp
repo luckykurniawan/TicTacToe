@@ -1,8 +1,5 @@
 #include "ComputerHard.h"
 #include "GameManager.h"
-#include <chrono>
-#include <thread>
-
 
 ComputerHard::ComputerHard(GameManager& _rGameManager) :
     rGameManager(_rGameManager),
